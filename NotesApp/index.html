@@ -1,0 +1,150 @@
+<html>
+    <head>
+        <style>
+            *{
+                background-color:azure;
+            }
+            table{
+           width:70%;
+          border-collapse: collapse;
+          margin-top: 50px;
+          background-color: cornsilk;
+
+        }
+        th,td{
+            border:1px solid black;
+            padding:10px;
+            
+        }
+        form{
+            margin-top: 30px;
+            border: 0px solid black;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-left: 500px;
+            margin-right:500px;
+           
+        }
+        .update{
+            color:white;
+            background-color: black;
+        }
+        .delete{
+            color:red;
+            
+        }
+        
+      input{
+        padding: 5px 5px;
+        margin: 10px 10px 4px 10px;
+       
+      }
+      th{
+        background-color: blue;
+        color:white;
+      }
+      .B{
+        margin-bottom: 10px;
+        background-color: blue;
+            color:white;
+      }
+        </style>
+    </head>
+    <body>
+
+      <center>
+        <h1 style="margin-top:50px;">Student Notes</h1>
+        <form action="">
+            <label for="">Enter Notes Name: </label>
+            <input type="text" id="A"><br><br>
+            <button class="B" onclick="addRow()">Add to Table</button>
+        </form>
+        <table id='table'>
+            <thead>
+                <tr>
+                <th>
+                    NotesName
+                </th>
+            
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </center>
+    <script>
+        function addRow(){
+            event.preventDefault();
+            const Name=document.getElementById('A').value;
+            if(Name===''){
+                alert('fill the name');
+                return;
+            }
+            const tablebody=document.getElementById('table').querySelector('tbody');
+            const newrow=document.createElement('tr');
+            newrow.innerHTML=`<td>${Name}</td>
+            <td>
+                <button class="update" onclick="updaterow(this)">update</button>
+                <button class="Delete" onclick="DeleteRow(this)">Delete</button>
+            </td>
+            `;
+            tablebody.appendChild(newrow);
+            document.getElementById('A').value = ''; // Correct ID
+            saveTabledata();
+            
+
+        }
+
+        function saveTabledata(){
+            const tablebody=document.getElementById('table').querySelector('tbody');
+            const rows=Array.from(tablebody.rows);
+            const tabledata=rows.map(function(row){
+                return{ Name: row.cells[0].innerText}
+            });
+
+            localStorage.setItem('tabledata',JSON.stringify(tabledata));
+            
+
+
+        }
+        window.onload=loadTableData;
+        function loadTableData() {
+            const storeddata=localStorage.getItem('tabledata');
+            if (!storeddata) return; 
+            const tabledata=JSON.parse(storeddata);
+            const tablebody=document.getElementById('table').querySelector('tbody');
+            tabledata.forEach(function(item){
+                const newrow=document.createElement('tr');
+                newrow.innerHTML=`<td>${item.Name}</td>
+                <td>
+                 <button class="update" onclick="updaterow(this)">update</button>
+                 <button class="Delete" onclick="DeleteRow(this)">Delete</button>
+                </td>`
+                tablebody.appendChild(newrow);
+            });
+            
+             
+        }
+        function DeleteRow(button){
+            const row=button.parentElement.parentElement;
+            row.remove()
+            saveTabledata();
+
+        }
+        function updaterow(button){
+            const row=button.parentElement.parentElement;
+            const data=row.cells[0].innerText;
+            row.remove();
+            document.getElementById('A').value=data;
+            saveTabledata();
+
+        }
+
+        
+    
+       
+    </script>
+    </body>
+</html>
